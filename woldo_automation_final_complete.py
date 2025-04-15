@@ -97,6 +97,7 @@ with tabs[0]:
             st.session_state.selected_matches[idx] = option_map[selection]
 
         if st.button("✅ 선택사항 반영 및 월도 발주서 생성"):
+            c_rows = []
             for idx, match in st.session_state.selected_matches.items():
                 a_row = a_df.iloc[idx]
                 c_rows.append({
