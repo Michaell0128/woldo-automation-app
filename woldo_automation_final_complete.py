@@ -56,11 +56,9 @@ with tabs[0]:
         with col1:
             a_file = st.file_uploader("네이버 주문서", type=["xlsx"])
             if a_file:
-                a_df = pd.read_excel(a_file)
-                if not a_df.empty and 0 in a_df.index:
-                    a_df = a_df.drop(index=0)
-            else:
-                a_df = None
+            a_df = pd.read_excel(a_file)
+        else:
+            a_df = None
         with col2:
             b_file = st.file_uploader("월도 상품목록", type=["xlsx"])
 
@@ -70,25 +68,18 @@ with tabs[0]:
         submitted = st.button("🚀 매칭 시작")
 
     if submitted and a_file and b_file:
-        st.info(f"🔍 A문서: {len(a_df)}행 / B문서: {len(pd.read_excel(b_file))}행 불러옴")
-        b_df = pd.read_excel(b_file)
+                b_df = pd.read_excel(b_file)
         st.session_state.pending_matches.clear()
         st.session_state.selected_matches.clear()
 
-                match_count = 0
-        for idx, a_row in a_df.iterrows():
+                for idx, a_row in a_df.iterrows():
             candidates = match_product_candidates(a_row, b_df)
-                        if len(candidates) == 1:
-                        st.session_state.selected_matches[idx] = candidates[0][2]
-                match_count += 1
-                        elif len(candidates) > 1:
-                        st.session_state.pending_matches.append((idx, a_row, candidates))
-                match_count += 1
+            if len(candidates) == 1:
+                st.session_state.selected_matches[idx] = candidates[0][2]
+            elif len(candidates) > 1:
+                st.session_state.pending_matches.append((idx, a_row, candidates))
 
-            if match_count == 0:
-            st.warning("⚠️ 매칭된 항목이 없습니다. 옵션정보 또는 상품명을 다시 확인해주세요.")
-        else:
-            st.success(f"✅ 총 {match_count}건의 매칭 후보가 탐지되었습니다.")
+            .")
 
     if st.session_state.pending_matches:
         st.markdown("## 🔍 중복 후보 선택")
