@@ -57,7 +57,6 @@ with tabs[0]:
             a_file = st.file_uploader("네이버 주문서", type=["xlsx"])
             if a_file:
                 a_df = pd.read_excel(a_file)
-        
         with col2:
             b_file = st.file_uploader("월도 상품목록", type=["xlsx"])
 
@@ -71,14 +70,12 @@ with tabs[0]:
         st.session_state.pending_matches.clear()
         st.session_state.selected_matches.clear()
 
-                for idx, a_row in a_df.iterrows():
+        for idx, a_row in a_df.iterrows():
             candidates = match_product_candidates(a_row, b_df)
             if len(candidates) == 1:
                 st.session_state.selected_matches[idx] = candidates[0][2]
             elif len(candidates) > 1:
                 st.session_state.pending_matches.append((idx, a_row, candidates))
-
-            .")
 
     if st.session_state.pending_matches:
         st.markdown("## 🔍 중복 후보 선택")
