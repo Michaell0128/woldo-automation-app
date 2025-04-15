@@ -64,7 +64,7 @@ with tabs[0]:
         submitted = st.button("🚀 매칭 시작")
 
     if submitted and a_file and b_file:
-        a_df = pd.read_excel(a_file)
+        a_df = pd.read_excel(a_file).drop(index=0).drop(index=0).drop(index=0)
         b_df = pd.read_excel(b_file)
         st.session_state.pending_matches.clear()
         st.session_state.selected_matches.clear()
