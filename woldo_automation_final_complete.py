@@ -64,7 +64,9 @@ with tabs[0]:
         submitted = st.button("🚀 매칭 시작")
 
     if submitted and a_file and b_file:
-    a_df = pd.read_excel(a_file)
+        
+        if not a_df.empty and 0 in a_df.index:
+            a_df = a_df.drop(index=0)
     if not a_df.empty and 0 in a_df.index:
         a_df = a_df.drop(index=0)
 
