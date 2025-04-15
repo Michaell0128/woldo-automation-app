@@ -56,7 +56,7 @@ with tabs[0]:
         with col1:
             a_file = st.file_uploader("네이버 주문서", type=["xlsx"])
             if a_file:
-            a_df = pd.read_excel(a_file)
+                a_df = pd.read_excel(a_file)
         else:
             a_df = None
         with col2:
