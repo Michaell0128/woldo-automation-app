@@ -57,8 +57,7 @@ with tabs[0]:
             a_file = st.file_uploader("네이버 주문서", type=["xlsx"])
             if a_file:
                 a_df = pd.read_excel(a_file)
-        else:
-            a_df = None
+        
         with col2:
             b_file = st.file_uploader("월도 상품목록", type=["xlsx"])
 
