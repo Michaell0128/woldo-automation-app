@@ -56,7 +56,7 @@ with tabs[0]:
         with col1:
             a_file = st.file_uploader("네이버 주문서", type=["xlsx"])
             if a_file:
-                # a_df는 이미 상단에서 처리됨
+                a_df = pd.read_excel(a_file)
                 if not a_df.empty and 0 in a_df.index:
                     a_df = a_df.drop(index=0)
             else:
