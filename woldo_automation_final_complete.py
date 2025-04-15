@@ -65,12 +65,10 @@ with tabs[0]:
 
     if submitted and a_file and b_file:
         a_df = pd.read_excel(a_file)
-        
-        
-    if not a_df.empty and 0 in a_df.index:
-        a_df = a_df.drop(index=0)
+        if not a_df.empty and 0 in a_df.index:
+            a_df = a_df.drop(index=0)
 
-                    b_df = pd.read_excel(b_file)
+        b_df = pd.read_excel(b_file)
         st.session_state.pending_matches.clear()
         st.session_state.selected_matches.clear()
 
