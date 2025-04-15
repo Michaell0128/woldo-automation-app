@@ -1,29 +1,4 @@
 import streamlit as st
-
-# 로그인 정보 설정
-VALID_USERNAME = "himyday"
-VALID_PASSWORD = "123123"
-
-def login():
-    if "authenticated" not in st.session_state:
-        st.session_state.authenticated = False
-
-    if not st.session_state.authenticated:
-        st.title("🔒 로그인 필요")
-        username = st.text_input("아이디")
-        password = st.text_input("비밀번호", type="password")
-        if st.button("로그인"):
-            if username == VALID_USERNAME and password == VALID_PASSWORD:
-                st.session_state.authenticated = True
-                st.success("로그인 성공! 🎉")
-            else:
-                st.error("아이디 또는 비밀번호가 올바르지 않습니다.")
-        st.stop()
-
-login()
-
-
-import streamlit as st
 import pandas as pd
 import re
 from io import BytesIO
@@ -34,7 +9,7 @@ st.set_page_config(page_title="월도자동화시스템", layout="wide")
 with st.container():
     st.markdown("""
     <h1 style='text-align:center; color:#4A90E2;'>📦 <span style='font-weight:500'>월도자동화시스템</span></h1>
-    <p style='text-align:center; font-size:16px; color:gray;'>A + B → C, A + D → E 자동 생성 솔루션</p>
+    <p style='text-align:center; font-size:16px; color:gray;'>월도 발주서 및 네이버 송장 엑셀 자동 생성 솔루션</p>
     """, unsafe_allow_html=True)
 
 st.markdown("---")
@@ -67,22 +42,25 @@ def match_product_candidates(a_row, b_df):
     candidates.sort(reverse=True)
     return candidates
 
-tabs = st.tabs(["🛒 A + B → C 발주 생성", "📦 A + D → E 송장 생성"])
+# ▒▒ TAB UI 구성 ▒▒
+tabs = st.tabs(["🛒 월도 발주서 생성", "📦 네이버 송장 엑셀 생성"])
 
-# TAB 1: 발주 생성
+# ▒▒ TAB 1: 발주 생성 ▒▒
 with tabs[0]:
-    st.markdown("""<h3 style='color:#4A90E2;'>🛒 네이버 주문서 + 월도 상품목록 → <strong>C 발주서</strong></h3>""", unsafe_allow_html=True)
+    st.markdown("""
+    <h3 style='color:#4A90E2;'>🛒 네이버 주문서 + 월도 상품목록 → <strong>C 발주서</strong></h3>
+    """, unsafe_allow_html=True)
     with st.expander("📁 파일 업로드 및 정보 입력", expanded=True):
         col1, col2 = st.columns(2)
         with col1:
-            a_file = st.file_uploader("A문서 업로드 (네이버 주문서)", type=["xlsx"])
+            a_file = st.file_uploader("네이버 주문서", type=["xlsx"])
         with col2:
-            b_file = st.file_uploader("B문서 업로드 (월도 상품목록)", type=["xlsx"])
+            b_file = st.file_uploader("월도 상품목록", type=["xlsx"])
 
         sender_name = st.text_input("송하인 이름", value="전국농가자랑")
         sender_phone = st.text_input("송하인 연락처", value="010-2890-0086")
 
-        submitted = st.button("🚀 C문서 생성하기")
+        submitted = st.button("🚀 월도 발주서 생성하기")
 
     if submitted and a_file and b_file:
         a_df = pd.read_excel(a_file)
@@ -104,7 +82,6 @@ with tabs[0]:
                 match = option_map[selected]
             else:
                 match = None
-
             if match is not None:
                 c_rows.append({
                     '순서': match['순서'],
@@ -127,7 +104,7 @@ with tabs[0]:
                 match_count += 1
 
         st.success(f"🎉 총 {match_count}건의 상품이 매칭되었습니다.")
-        st.markdown("#### 📊 생성된 C문서 미리보기")
+        st.markdown("#### 📊 생성된 발주서 미리보기")
         st.dataframe(pd.DataFrame(c_rows).head(), use_container_width=True)
 
         c_buffer = BytesIO()
@@ -136,23 +113,25 @@ with tabs[0]:
         c_buffer.seek(0)
 
         st.download_button(
-            label="📥 C문서 다운로드 (월도 발주서)",
+            label="📥 월도 발주서 다운로드",
             data=c_buffer,
-            file_name="C문서_월도발주서.xlsx",
+            file_name="월도발주서.xlsx",
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         )
 
-# TAB 2: 송장 생성
+# ▒▒ TAB 2: 송장 생성 ▒▒
 with tabs[1]:
-    st.markdown("""<h3 style='color:#50AF61;'>📦 네이버 주문서 + 송장 포함 C문서 → <strong>E 송장입력서</strong></h3>""", unsafe_allow_html=True)
+    st.markdown("""
+    <h3 style='color:#50AF61;'>📦 네이버 주문서 + 월도 송장서 → <strong>E 네이버 송장 엑셀</strong></h3>
+    """, unsafe_allow_html=True)
     with st.expander("📁 파일 업로드", expanded=True):
         col3, col4 = st.columns(2)
         with col3:
-            a_file2 = st.file_uploader("A문서 업로드 (네이버 주문서)", type=["xlsx"], key="a2")
+            a_file2 = st.file_uploader("네이버 주문서", type=["xlsx"], key="a2")
         with col4:
-            d_file = st.file_uploader("D문서 업로드 (송장 포함 C문서)", type=["xlsx"], key="d")
+            d_file = st.file_uploader("월도 송장서", type=["xlsx"], key="d")
 
-        invoice_submitted = st.button("🚀 E문서 생성하기")
+        invoice_submitted = st.button("🚀 네이버 송장 엑셀")
 
     if invoice_submitted and a_file2 and d_file:
         a_df2 = pd.read_excel(a_file2)
@@ -183,7 +162,7 @@ with tabs[1]:
                 })
 
         st.success(f"📦 총 {len(e_rows)}건의 송장번호가 정상 매칭되었습니다.")
-        st.markdown("#### 📊 생성된 E문서 미리보기")
+        st.markdown("#### 📊 생성된 네이버 송장 엑셀 미리보기")
         st.dataframe(pd.DataFrame(e_rows).head(), use_container_width=True)
 
         e_buffer = BytesIO()
@@ -194,6 +173,6 @@ with tabs[1]:
         st.download_button(
             label="📥 E문서 다운로드 (네이버 송장엑셀 - .xls 형식)",
             data=e_buffer,
-            file_name="E문서_네이버송장.xls",
+            file_name="네이버송장엑셀.xls",
             mime="application/vnd.ms-excel"
         )
