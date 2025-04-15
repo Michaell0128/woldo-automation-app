@@ -55,6 +55,12 @@ with tabs[0]:
         col1, col2 = st.columns(2)
         with col1:
             a_file = st.file_uploader("네이버 주문서", type=["xlsx"])
+            if a_file:
+                # a_df는 이미 상단에서 처리됨
+                if not a_df.empty and 0 in a_df.index:
+                    a_df = a_df.drop(index=0)
+            else:
+                a_df = None
         with col2:
             b_file = st.file_uploader("월도 상품목록", type=["xlsx"])
 
@@ -64,9 +70,6 @@ with tabs[0]:
         submitted = st.button("🚀 매칭 시작")
 
     if submitted and a_file and b_file:
-        a_df = pd.read_excel(a_file)
-        if not a_df.empty and 0 in a_df.index:
-            a_df = a_df.drop(index=0)
 
         b_df = pd.read_excel(b_file)
         st.session_state.pending_matches.clear()
